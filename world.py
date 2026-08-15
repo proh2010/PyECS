@@ -1,13 +1,14 @@
 class World():
-	def __init__(self, component_list):
+	def __init__(self, components_list):
 		self._entities_list = dict() #dict (ID:entity)
 		self.system_list = [] #list of systems
 		self._to_delete = [] #for delition
+		self._to_add = []
 		self._alive = set() #using entities
 		self._free_ids = []
 		self._next_id = 0
 		if not(isinstance(components_list,tuple)):
-			raise TypeError(f"Components must be a tuple, not {type(components_list)}")
+			raise TypeError(f"Components must be a tuple, not {str(type(components_list))}")
 		self._components_list = components_list #components
 
 
@@ -19,14 +20,17 @@ class World():
 			self._free_ids.append(ids)
 			self._entities_list.pop(ids)
 		self._to_delete = []
+		for ids in self._to_add:
+			self._alive.add(ids)
+		self._to_add = []
 
 		#system loop
 		for system in self.system_list:
-			components_need = components_to_hash(system.get_components())
+			components_need = self.components_to_hash(system.get_components())
 			for entity in self._alive:
-				entity_components = components_to_hash(entity.get_components())
+				entity_components = self.components_to_hash(self._entities_list[entity].get_components())
 				if entity_components & components_need == components_need:
-					system.execute(_entities_list[entity], self)
+					system.execute(self._entities_list[entity], self)
 
 	#adds entity to deletion list
 	def delete_entity(self, entity_id):
@@ -42,7 +46,7 @@ class World():
 			new_id = self._next_id
 			self._next_id += 1
 		#add new entity
-		self._alive.add(new_id)
+		self._to_add.append(new_id)
 		self._entities_list[new_id] = entity
 
 	def components_to_hash(self, components):

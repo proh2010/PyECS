@@ -1,8 +1,8 @@
 class Entity():
-	def __init__(self, components):
+	def __init__(self, *components):
 		self.components_types = set()
 		self.components_dict = {}
-		for component in componens:
+		for component in components:
 			self.components_types.add(type(component))
 			self.components_dict[type(component)] = component
 
@@ -30,4 +30,4 @@ class Entity():
 			else:
 				raise ValueError("Thre is no components with type " + str(component))
 	def get_component_by_type(self, type):
-		return components_dict[type]
+		return self.components_dict[type]

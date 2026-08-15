@@ -6,7 +6,7 @@ def requires(*components):
 		return system_class
 	return decorator
 
-class system(ABC):
+class System(ABC):
 	@abstractmethod
 	def execute(self, entity, world):
 		pass
