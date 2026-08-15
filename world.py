@@ -25,8 +25,8 @@ class World():
 			components_need = components_to_hash(system.get_components())
 			for entity in self._alive:
 				entity_components = components_to_hash(entity.get_components())
-				if entity_components == components_need:
-					system.execute(entity, self)
+				if entity_components & components_need == components_need:
+					system.execute(_entities_list[entity], self)
 
 	#adds entity to deletion list
 	def delete_entity(self, entity_id):
