@@ -1,0 +1,56 @@
+class World():
+	def __init__(self, component_list):
+		self._entities_list = dict() #dict (ID:entity)
+		self.system_list = [] #list of systems
+		self._to_delete = [] #for delition
+		self._alive = set() #using entities
+		self._free_ids = []
+		self._next_id = 0
+		if not(isinstance(components_list,tuple)):
+			raise TypeError(f"Components must be a tuple, not {type(components_list)}")
+		self._components_list = components_list #components
+
+
+	#updates all entities
+	def update(self):
+		#removes all entities from to_delete
+		for ids in self._to_delete:
+			self._alive.remove(ids)
+			self._free_ids.append(ids)
+			self._entities_list.pop(ids)
+		self._to_delete = []
+
+		#system loop
+		for system in self.system_list:
+			components_need = components_to_hash(system.get_components())
+			for entity in self._alive:
+				entity_components = components_to_hash(entity.get_components())
+				if entity_components == components_need:
+					system.execute(entity, self)
+
+	#adds entity to deletion list
+	def delete_entity(self, entity_id):
+		self._to_delete.append(entity_id)
+
+	#adds entity
+	def add_entity(self, entity):
+		#choose new id
+		if self._free_ids:
+			new_id = self._free_ids[-1]
+			self._free_ids.pop()
+		else:
+			new_id = self._next_id
+			self._next_id += 1
+		#add new entity
+		self._alive.add(new_id)
+		self._entities_list[new_id] = entity
+
+	def components_to_hash(self, components):
+		mask = 0
+		for i, component in enumerate(self._components_list):
+			if component in components:
+				mask |= (1 << i)
+		return mask
+
+
+
