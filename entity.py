@@ -11,10 +11,10 @@ class Entity():
 	def add_components(self, *components):
 		for component in components:
 			if type(component) in self.components_types:
-				self.components_dict[type(component)] += comonent
+				self.components_dict[type(component)] += component
 			else:
 				self.components_types.add(type(component))
-				self.components_dict[type(component)] = comonent
+				self.components_dict[type(component)] = component
 	def remove_components(self, *components):
 		for component in components:
 			if type(component) in self.components_types:
@@ -29,5 +29,5 @@ class Entity():
 				self.components_dict.pop(component)
 			else:
 				raise ValueError("Thre is no components with type " + str(component))
-	def get_component_by_type(self, type):
-		return self.components_dict[type]
+	def get_component_by_type(self, component_type):
+		return self.components_dict[component_type]
