@@ -4,7 +4,6 @@ class World():
 		self.system_list = [] #list of systems
 		self._to_delete = [] #for delition
 		self._to_add = []
-		self._alive = set() #using entities
 		self._free_ids = []
 		self._next_id = 0
 		if not(isinstance(components_list,tuple)):
@@ -18,30 +17,37 @@ class World():
 	def update(self):
 		#removes all entities from to_delete
 		for ids in self._to_delete:
-			self._alive.remove(ids)
 			self._free_ids.append(ids)
 			self._entities_list.pop(ids)
 		self._to_delete = []
-		for ids in self._to_add:
-			self._alive.add(ids)
+		for ids, entity in self._to_add:
+			self._entities_list[ids] = entity
+
 		self._to_add = []
 
 		#system loop
 		for system in self.system_list:
 			components_need = self.components_to_hash(system.get_components())
-			for entity in self._alive:
+			entities = []
+			entities_ids = []
+			for entity in self._entities_list.keys():
 				entity_components = self.components_to_hash(self._entities_list[entity].get_components())
 				if entity_components & components_need == components_need:
-					system.execute(self._entities_list[entity], self)
+					entities_ids.append(entity)
+					entities.append(self._entities_list[entity])
+			system.execute(entities, entities_ids, self)
 
 		#loop for request entitiies
 		for system in self.system_list:
 			components_need = self.components_to_hash(system.get_components())
+			entities = []
+			entities_ids = []
 			for entity in self._request_entities_list.keys():
 				entity_components = self.components_to_hash(self._request_entities_list[entity].get_components())
 				if entity_components & components_need == components_need:
-					system.execute(self._request_entities_list[entity], self)
-
+					entities_ids.append(entity)
+					entities.append(self._request_entities_list[entity])
+			system.execute(entities, entities_ids, self)
 		self._request_entities_list = dict()
 
 	#adds entity to deletion list
@@ -58,8 +64,8 @@ class World():
 			new_id = self._next_id
 			self._next_id += 1
 		#add new entity
-		self._to_add.append(new_id)
-		self._entities_list[new_id] = entity
+		self._to_add.append((new_id, entity))
+		
 
 	def components_to_hash(self, components):
 		mask = 0
