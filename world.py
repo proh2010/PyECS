@@ -56,5 +56,8 @@ class World():
 				mask |= (1 << i)
 		return mask
 
+	def add_system_group(self, sistem_group):
+		self.system_list.extend(sistem_group.systems)
+
 
 

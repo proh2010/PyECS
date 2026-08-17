@@ -14,3 +14,8 @@ class System(ABC):
 	def get_components(self):
 		return self. _required_components
 
+
+class SystemGroup():
+	def __init__(self, *systems):
+		self.systems = list(systems)
+
