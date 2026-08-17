@@ -8,7 +8,7 @@ def requires(*components):
 
 class System(ABC):
 	@abstractmethod
-	def execute(self, entity, world):
+	def execute(self, entities, entities_ids, world):
 		pass
 
 	def get_components(self):
