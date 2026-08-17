@@ -11,6 +11,8 @@ class World():
 			raise TypeError(f"Components must be a tuple, not {str(type(components_list))}")
 		self._components_list = components_list #components
 
+		#for responce entities
+		self._request_entities_list = dict()
 
 	#updates all entities
 	def update(self):
@@ -31,6 +33,16 @@ class World():
 				entity_components = self.components_to_hash(self._entities_list[entity].get_components())
 				if entity_components & components_need == components_need:
 					system.execute(self._entities_list[entity], self)
+
+		#loop for request entitiies
+		for system in self.system_list:
+			components_need = self.components_to_hash(system.get_components())
+			for entity in self._request_entities_list.keys():
+				entity_components = self.components_to_hash(self._request_entities_list[entity].get_components())
+				if entity_components & components_need == components_need:
+					system.execute(self._request_entities_list[entity], self)
+
+		self._request_entities_list = dict()
 
 	#adds entity to deletion list
 	def delete_entity(self, entity_id):
@@ -59,5 +71,13 @@ class World():
 	def add_system_group(self, sistem_group):
 		self.system_list.extend(sistem_group.systems)
 
+	def add_request_entity(self, entity):
+		if self._free_ids:
+			new_id = self._free_ids[-1]
+			self._free_ids.pop()
+		else:
+			new_id = self._next_id
+			self._next_id += 1
+		self._request_entities_list[new_id] = entity
 
 
