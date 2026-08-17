@@ -12,6 +12,7 @@ class World():
 
 		#for responce entities
 		self._request_entities_list = dict()
+		self.dt = 0
 
 	#updates all entities
 	def update(self):
@@ -35,20 +36,17 @@ class World():
 				if entity_components & components_need == components_need:
 					entities_ids.append(entity)
 					entities.append(self._entities_list[entity])
-			system.execute(entities, entities_ids, self)
 
-		#loop for request entitiies
-		for system in self.system_list:
-			components_need = self.components_to_hash(system.get_components())
-			entities = []
-			entities_ids = []
+			#loop for request entitiies
 			for entity in self._request_entities_list.keys():
 				entity_components = self.components_to_hash(self._request_entities_list[entity].get_components())
 				if entity_components & components_need == components_need:
 					entities_ids.append(entity)
 					entities.append(self._request_entities_list[entity])
-			system.execute(entities, entities_ids, self)
+			system.execute(zip(entities, entities_ids), self, self.dt)
+
 		self._request_entities_list = dict()
+		self.dt += 1
 
 	#adds entity to deletion list
 	def delete_entity(self, entity_id):
