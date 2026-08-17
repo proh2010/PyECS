@@ -8,14 +8,20 @@ def requires(*components):
 
 class System(ABC):
 	@abstractmethod
-	def execute(self, entities, entities_ids, world):
+	def execute(self, entities, world, dt):
 		pass
 
 	def get_components(self):
-		return self. _required_components
+		return self._required_components
 
 
 class SystemGroup():
 	def __init__(self, *systems):
 		self.systems = list(systems)
+	def add_systems(self, *systems):
+		for system in systems:
+			if isinstance(system, System):
+				self.systems.append(system)
+			elif isinstance(system, SystemGroup):
+				self.systems.extend(system.systems)
 
