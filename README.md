@@ -2,7 +2,7 @@
 
 # PyECS
 
-**PyECS** — это минималистичный ECS-фреймворк на Python.  
+**Py_ECS_framework** — это минималистичный ECS-фреймворк на Python.  
 Он позволяет строить игровую логику через **компоненты, сущности и системы**.
 
 ---
@@ -22,7 +22,7 @@
 ## Установка
 
 ```bash
-pip install py-ecs-framework
+pip install py-ECS-framework
 ```
 ---
 
@@ -57,7 +57,7 @@ class Health:
 Наследуйся от `Entity` и передай компоненты в `super().__init__()`.
 
 ```python
-from pyecs import Entity
+from py_ECS_framework import Entity
 
 class Player(Entity):
     def __init__(self):
@@ -78,7 +78,7 @@ class Player(Entity):
 - `@global_system` — система получает **все** подходящие сущности сразу (удобно для физики, рендеринга)
 
 ```python
-from pyecs import System, requires, global_system
+from py_ECS_framework import System, requires, global_system
 
 # Обычная система (одна сущность за раз)
 @requires(Position, Velocity)
@@ -111,7 +111,7 @@ class DeathSystem(System):
 Создай мир, зарегистрируй компоненты, добавь системы и сущности.
 
 ```python
-from pyecs import World
+from py_ECS_framework import World
 
 # Все типы компонентов, которые будут использоваться
 world = World((Position, Velocity, Health))
@@ -140,7 +140,7 @@ while True:
 Группируй системы для удобства:
 
 ```python
-from pyecs import SystemGroup
+from py_ECS_framework import SystemGroup
 
 physics_group = SystemGroup(
     MovementSystem(),
