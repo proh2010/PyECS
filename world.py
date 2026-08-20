@@ -36,6 +36,8 @@ class World():
 				if entity_components & components_need == components_need:
 					entities_ids.append(entity)
 					entities.append(self._entities_list[entity])
+					if not(system._is_global):
+						system.execute((entities[-1], entities_ids[-1]), self, self.dt)
 
 			#loop for request entitiies
 			for entity in self._request_entities_list.keys():
@@ -43,7 +45,10 @@ class World():
 				if entity_components & components_need == components_need:
 					entities_ids.append(entity)
 					entities.append(self._request_entities_list[entity])
-			system.execute(zip(entities, entities_ids), self, self.dt)
+					if not(system._is_global):
+						system.execute((entities[-1], entities_ids[-1]), self, self.dt)
+			if system._is_global:
+				system.execute(zip(entities, entities_ids), self, self.dt)
 
 		self._request_entities_list = dict()
 		self.dt += 1
