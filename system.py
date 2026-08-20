@@ -5,15 +5,20 @@ def requires(*components):
 		system_class._required_components = frozenset(components)
 		return system_class
 	return decorator
+def global_system():
+	def decorator(system_class):
+		system_class._is_global = True
+		return system_class
+	return decorator
 
 class System(ABC):
+	_is_global = False
 	@abstractmethod
-	def execute(self, entities, world, dt):
+	def execute(self, target, world, dt):
 		pass
-
-	def get_components(self):
-		return self._required_components
-
+	@classmethod
+	def get_components(cls):
+		return cls._required_components
 
 class SystemGroup():
 	def __init__(self, *systems):
